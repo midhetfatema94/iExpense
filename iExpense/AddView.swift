@@ -12,6 +12,7 @@ struct AddView: View {
     @State private var type = "Personal"
     @State private var amount = ""
     @ObservedObject var expenses = Expenses()
+    @Environment(\.presentationMode) var presentationMode
     
     static let types = ["Business", "Personal"]
     
@@ -38,6 +39,7 @@ struct AddView: View {
                         amount: actualAmount
                     )
                     self.expenses.items.append(newItem)
+                    self.presentationMode.wrappedValue.dismiss()
                 }
             }, label: {
                 Text("Save")
