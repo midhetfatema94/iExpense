@@ -49,29 +49,61 @@ struct ContentView: View {
                     HStack {
                         VStack(alignment: .leading) {
                             Text(item.name)
-                                .font(.headline)
+                                .expenseNameStyle(color: self.getColor(expenseAmount: item.amount))
                             Text(item.type)
                         }
                         Spacer()
                         Text("$\(item.amount)")
+                            .expenseAmountStyle(color: self.getColor(expenseAmount: item.amount))
                     }
                 }
                 .onDelete(perform: removeItems)
             }
             .navigationBarTitle("iExpense")
-            .navigationBarItems(trailing: Button(action: {
-                showingAddExpense = true
-            }, label: {
-                Image(systemName: "plus")
-            }))
-            .sheet(isPresented: $showingAddExpense, content: {
-                AddView(expenses: self.expenses)
-            })
+            .navigationBarItems(trailing:
+                HStack {
+                    Button(action: {
+                        self.showingAddExpense = true
+                    }, label: {
+                        Image(systemName: "plus")
+                    })
+                    .sheet(isPresented: $showingAddExpense, content: {
+                        AddView(expenses: self.expenses)
+                    })
+                    
+                    EditButton()
+                }
+            )
         }
     }
     
     func removeItems(at offsets: IndexSet) {
         expenses.items.remove(atOffsets: offsets)
+    }
+    
+    func getColor(expenseAmount: Int) -> Color {
+        if expenseAmount <= 10 {
+            return Color.yellow
+        } else if expenseAmount <= 100 {
+            return Color.orange
+        }
+        return Color.red
+    }
+}
+
+extension Text {
+    func expenseNameStyle(color: Color) -> some View {
+        self
+            .font(.headline)
+            .fontWeight(.bold)
+            .multilineTextAlignment(.leading)
+            .foregroundColor(color)
+    }
+    
+    func expenseAmountStyle(color: Color) -> some View {
+        self
+            .fontWeight(.bold)
+            .foregroundColor(color)
     }
 }
 
